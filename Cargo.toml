@@ -1,0 +1,38 @@
+[package]
+name = "shortcuter"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+mlua = { version = "0.11.4", features = [
+    "lua51",
+    "vendored",
+    "serde",
+    "async",
+] }
+win-utf8-rs = "0.2.1"
+json5 = "0.4"
+fluaterm = "0.2.2"
+
+[profile.dev]
+opt-level = 0      # fastest build, slowest runtime
+lto = false        # "thin" works, but slows compile
+strip = false      # dont strip debug infos
+debug = true
+incremental = true
+
+[profile.release]
+opt-level = 3       # 0 -> no optimizing, 3 -> max speed
+lto = "fat"         # oder "thin" für schnelleren Build
+codegen-units = 1   # bessere Optimierung, aber langsamerer Compile
+panic = "abort"     # spart etwas Platz, leicht schneller
+strip = true        # entfernt Debug-Symbole (optional)
+debug = false
+incremental = false
+
+# cargo build --profile staging
+# cargo bloat --profile staging
+# Profile for Testing / Experimentil with the File Size
+[profile.staging]
+inherits = "release"
+opt-level = "z"
