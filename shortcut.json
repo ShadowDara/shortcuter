@@ -1,0 +1,7 @@
+// Flua Commands File
+[
+    {
+        "name": "Hallo",
+        "command": "echo hi"
+    }
+]
