@@ -6,6 +6,4 @@ default-run = "shortcuter"
 
 [dependencies]
 win-utf8-rs = "0.2.1"
-json5 = "0.4"
-fluaterm = "0.2.2"
 loader = { workspace = true }

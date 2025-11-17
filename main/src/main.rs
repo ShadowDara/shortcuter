@@ -1,20 +1,51 @@
 /// Shortcuter
 /// a simple program by to make shortcuts like make
 /// but more advanced althought with Lua
-
-use std::env;
 use loader;
+use std::{env, path::PathBuf};
 use win_utf8_rs::enable_utf8;
 
 fn main() {
-    // Enable UTF 8 for Windows
+    // UTF-8 für Windows aktivieren
     let _ = enable_utf8();
 
-    // Array of Programm Arguments
+    // Start Message
+    println!("\x1b[32mShortcuter\x1b[0m");
+
+    // Programmargumente
     let args: Vec<String> = env::args().collect();
+    if args.len() < 2 {
+        eprintln!("Please supply min 1 argument or run with config for more Infos!");
+        return;
+    }
 
-    // Load the Config
-    let config = loader::config_rs::loadconfig();
+    // args[1] ist der Funktionsname
+    let func_name = &args[1];
 
-    println!("Hello, world!");
+    if func_name == "config" {
+        loader::print_info();
+        return;
+    }
+
+    // Pfad der exe
+    let exe_path = env::current_exe().unwrap();
+    let exe_dir: PathBuf = exe_path.parent().unwrap().to_path_buf();
+
+    // Config laden
+    let config = match loader::config_rs::load_config(exe_dir) {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("Fehler beim Laden der Config: {}", e);
+            return;
+        }
+    };    
+
+    if let Some(func) = config.funcs.get(func_name) {
+        // Funktion existiert → aufrufen
+        if let Err(e) = func.call::<()>(()) {
+            eprintln!("Error while calling '{}': {}", func_name, e);
+        }
+    } else {
+        println!("No Lua function with name '{}' found.", func_name);
+    }
 }

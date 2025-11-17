@@ -1,58 +1,85 @@
-// Config
-
+use std::collections::HashMap;
 use std::fs;
-use dirs_next;
 use std::path::PathBuf;
-use mlua::Lua;
+use dirs_next;
+use mlua::{Lua, Table, Function, Result};
 
 use crate::add_api::add_api;
 
 pub struct Config {
-    // CONFIG VALUES
-    wait_time: u64,
-    show_info: bool,
-    loglevel: u8,
+    // pub wait_time: u64,
+    // pub show_info: bool,
+    // pub loglevel: u8,
+    pub funcs: HashMap<String, Function>, // kein 'lua
 }
 
-// Default-Trait for Config
 impl Default for Config {
     fn default() -> Self {
         Config {
-            wait_time: 3,    // z. B. 3 s als Standardwert
-            show_info: true, // Standard auf true
-            loglevel: 3,     // Set Loglevel to Debug
+            // wait_time: 3,
+            // show_info: true,
+            // loglevel: 3,
+            funcs: HashMap::new(),
         }
     }
 }
 
-pub fn loadconfig(localpath: String) -> Config {
+pub fn load_config(local_path: PathBuf) -> Result<Config> {
     let global_path = get_config_path();
 
-    // Read the Content for the config File
-    let contents: String = match fs::read_to_string(&global_path) {
+    let mut global_file = global_path;
+    global_file.push("config.lua");
+
+    // Datei lesen
+    let global_contents = match fs::read_to_string(&global_file) {
         Ok(c) => c,
         Err(_) => {
             println!("Config file not found, using default Config.");
-            return Config::default();
+            return Ok(Config::default());
         }
     };
 
-    // Create a new Lua Instance
+    // Lua-Instanz
     let lua = Lua::new();
 
-    // Register all APIs
+    // API registrieren
     let _ = add_api(&lua);
 
-    return Config::default();
+    // Lua-Argument-Tabelle
+    let lua_arg = lua.create_table()?;
+    lua.globals().set("arg", lua_arg)?;
+
+    // Lua ausführen
+    lua.load(&global_contents).exec()?;
+
+    // Lua-Tabelle auslesen
+    let config_table: Table = lua.globals().get("c")?;
+
+    // let wait_time: u64 = config_table.get("wait_time").unwrap_or(3);
+    // let show_info: bool = config_table.get("show_info").unwrap_or(true);
+    // let loglevel: u8 = config_table.get("loglevel").unwrap_or(3);
+
+    // Funktionen auslesen
+    let funcs_table: Table = config_table.get("funcs").unwrap_or(lua.create_table()?);
+    let mut funcs: HashMap<String, Function> = HashMap::new();
+
+    for pair in funcs_table.pairs::<String, Function>() {
+        let (name, func) = pair?;
+        funcs.insert(name, func);
+    }
+
+    Ok(Config {
+        // wait_time,
+        // show_info,
+        // loglevel,
+        funcs,
+    })
 }
 
-// Function to get the Config Path
-fn get_config_path() -> PathBuf {
+// Config-Pfad bestimmen
+pub fn get_config_path() -> PathBuf {
     let mut path: PathBuf = dirs_next::config_dir().expect("could not find config_dir()");
-
     path.push("@shadowdara");
-    path.push("flua");
-    path.push("config.lua");
-
-    return path;
+    path.push("sc");
+    path
 }
