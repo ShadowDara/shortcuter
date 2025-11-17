@@ -1,12 +1,11 @@
 # Shortcuter
 
 [workspace]
-members = ["main", "config", "loader"]
+members = ["main", "loader"]
 
 resolver = "3"
 
 [workspace.dependencies]
-config = { path = "config" }
 loader = { path = "loader" }
 
 # Dependencies out of the Workspace

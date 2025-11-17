@@ -5,12 +5,7 @@ edition = "2024"
 default-run = "shortcuter"
 
 [dependencies]
-mlua = { version = "0.11.4", features = [
-    "lua51",
-    "vendored",
-    "serde",
-    "async",
-] }
 win-utf8-rs = "0.2.1"
 json5 = "0.4"
 fluaterm = "0.2.2"
+loader = { workspace = true }
