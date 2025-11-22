@@ -1,8 +1,8 @@
+use dirs_next;
+use mlua::{Function, Lua, Result, Table};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
-use dirs_next;
-use mlua::{Lua, Table, Function, Result};
 
 use crate::add_api::add_api;
 
@@ -24,6 +24,7 @@ impl Default for Config {
     }
 }
 
+// Function to load the Config File
 pub fn load_config(local_path: PathBuf) -> Result<Config> {
     let global_path = get_config_path();
 

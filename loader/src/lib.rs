@@ -1,7 +1,3 @@
-use dirs_next;
-use mlua;
-use std::path::PathBuf;
-
 use crate::config_rs::get_config_path;
 
 mod add_api;
@@ -11,6 +7,7 @@ pub fn print_info() {
     println!("Shortcuter Help");
     println!("\nReserved Keywords for callable Function Names");
     println!("    config");
+    println!("    list");
     println!("\nMore Infos:");
     println!("https://github.com/ShadowDara/shortcuter");
     println!("\nConfig Path");

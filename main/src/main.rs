@@ -22,9 +22,17 @@ fn main() {
     // args[1] ist der Funktionsname
     let func_name = &args[1];
 
+    // Show Config
     if func_name == "config" {
         loader::print_info();
         return;
+    }
+
+    let mut list = false;
+
+    // Display all Registered Functions
+    if func_name == "list" {
+        list = true;
     }
 
     // Pfad der exe
@@ -35,17 +43,26 @@ fn main() {
     let config = match loader::config_rs::load_config(exe_dir) {
         Ok(c) => c,
         Err(e) => {
-            eprintln!("Fehler beim Laden der Config: {}", e);
+            eprintln!("Error while Loading the Config: {}", e);
             return;
         }
-    };    
+    };
 
-    if let Some(func) = config.funcs.get(func_name) {
-        // Funktion existiert → aufrufen
-        if let Err(e) = func.call::<()>(()) {
-            eprintln!("Error while calling '{}': {}", func_name, e);
+    if list {
+        // List all Functions
+        println!("Listing Registered Functions");
+        for (key, _) in &config.funcs {
+            println!("{}", key);
         }
     } else {
-        println!("No Lua function with name '{}' found.", func_name);
+        // Run a function
+        if let Some(func) = config.funcs.get(func_name) {
+            // Funktion existiert → aufrufen
+            if let Err(e) = func.call::<()>(()) {
+                eprintln!("Error while calling '{}': {}", func_name, e);
+            }
+        } else {
+            println!("No Lua function with name '{}' found.", func_name);
+        }
     }
 }

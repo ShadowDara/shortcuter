@@ -2,13 +2,13 @@
 
 a little Rust programm to easily make shortcuts ore easy startable scripts
 
+- Run with `config` for Infos
+- Run with `list` to List all registered Functions
+
 ### Config
 ```lua
 -- Table for the Export Values
 c = {}
-c.wait_time = 5
-c.show_info = true
-c.loglevel = 3
 
 -- Lua function 1
 function greet()
