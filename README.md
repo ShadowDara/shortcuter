@@ -5,6 +5,10 @@ a little Rust programm to easily make shortcuts ore easy startable scripts
 - Run with `config` for Infos
 - Run with `list` to List all registered Functions
 
+### Setup
+run `sc config` and create a new config File. Paste the default downbelow.
+Now have fun!
+
 ### Config
 ```lua
 -- Table for the Export Values
@@ -31,3 +35,7 @@ c.funcs = {
     add = add_numbers
 }
 ```
+
+### Contributing
+
+Feel free to create Issues or contribute !

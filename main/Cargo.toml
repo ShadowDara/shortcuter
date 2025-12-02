@@ -1,8 +1,8 @@
 [package]
-name = "shortcuter"
+name = "sc"
 version = "0.1.0"
 edition = "2024"
-default-run = "shortcuter"
+default-run = "sc"
 
 [dependencies]
 win-utf8-rs = "0.2.1"
